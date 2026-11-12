@@ -1,213 +1,425 @@
-# Spend-Wise: Personal Expense Tracker
+# 💸 Spend-Wise
 
-A full-stack web app for students to log daily expenses, set monthly budgets, get early-warning alerts,
-and see spending patterns in charts. Built to the project's SRS, ER diagram and DFDs.
+A full-stack expense tracking and budgeting platform for students. Built to make managing money simpler, clearer, and less stressful.
 
-| Layer | Technology |
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
+
+## 📋 Overview
+
+Spend-Wise is a comprehensive personal finance web application designed for college and university students. It lets users log daily expenses, set monthly and per-category budgets, get early-warning alerts before overspending, track income and savings goals, and see exactly where their money goes through clear charts, all in one place.
+
+Built with a clean REST API backend and a fully responsive React frontend, Spend-Wise delivers a calm, modern budgeting experience with light and dark modes.
+
+## ✨ Features
+
+### 👤 User Features
+
+**Account Management**
+- User registration and login with JWT authentication
+- Forgot-password flow with an emailed, single-use reset link (valid for 30 minutes)
+- Profile management: update your name, change your password, upload a profile photo
+- Securely hashed passwords
+
+**Expense Tracking**
+- Add, edit and delete expenses with amount, category, date and description
+- Search by keyword and filter by category and date range
+- Pagination for long histories
+- Export your expenses to CSV (respects the current filters)
+- Live hint while adding an expense showing how much is left in the chosen category
+
+**Categories**
+- Six built-in categories: Food & Dining, Transport, Books & Supplies, Rent & Utilities, Entertainment, Miscellaneous
+- Create, rename and delete your own custom categories
+- Categories that still have expenses are protected from deletion
+
+**Budgets & Alerts**
+- Set an overall monthly spending cap
+- Give any category its own optional limit, or skip it
+- Copy last month's budgets into the current month with one click
+- Automatic status for every budget:
+
+| Usage | Status |
 |---|---|
-| Frontend | React 18, Vite, React Router, Axios, Recharts, plain CSS |
-| Backend | Node.js, Express 5, mysql2, JWT (jsonwebtoken), bcryptjs, express-validator, helmet, cors, express-rate-limit |
-| Database | MySQL 8.0.16+ |
+| Below 80% | 🟢 On track |
+| 80% to 99% | 🟠 Nearing limit |
+| 100% or more | 🔴 Over budget |
 
-## New in v3
+- Instant alert notifications whenever a new expense pushes a budget into warning or exceeded
 
-**Look and feel:** gentle page and card transitions, bars and numbers that animate in, a smooth light/dark switch (top bar), icons in the sidebar, soft shadows. No gradients, no neon. Motion switches off automatically for people who prefer reduced motion.
+**Income**
+- Record allowance, salary, scholarships, freelance work and more
+- Dashboard shows income and net savings for the month
 
-**Features**
-- **Income:** record allowance, salary, scholarships. The dashboard shows income, net savings, and spent-vs-income for 6 months.
-- **Savings goals:** target, deadline, add/take out money, "save about X a month" hint.
-- **Recurring expenses:** rent, subscriptions and so on are added automatically on their day each month (never twice). Pause, edit or delete any time.
-- **Forgot password:** emailed link, valid 30 minutes, single use.
-- **Admin panel:** user list/search, activate/deactivate, delete, clean up long-inactive accounts, manage default categories.
-- Also from v2: per-category limits (leave empty or **Skip** for no limit), copy last month's budgets, collapsible sidebar, profile photo, CSV export, remaining-in-category hint.
+**Recurring Expenses**
+- Add rent, subscriptions or recharges once and they are added automatically on their day every month
+- Never duplicated, even if you open the app many times
+- Pause, resume, edit or delete any rule
 
-**Bug fixed:** an impossible filter date such as `2026-02-31` used to cause a server error. It now returns a clear message.
+**Savings Goals**
+- Create goals with a target amount and optional deadline
+- Add money to, or take money out of, a goal at any time
+- Progress bar and a "save about X a month" suggestion
+- Goal-reached celebration at 100%
 
-### Upgrading from v1 or v2
+**Dashboard**
+- Spent this month, monthly cap, remaining balance and a colour-coded budget meter
+- Income, net savings and transaction count
+- Donut chart of spending by category
+- Six-month chart comparing spending and income
+- Category budget progress and recent expenses at a glance
 
-```powershell
-# 1. Stop both servers (Ctrl+C)
-# 2. Extract this zip over your existing folder (your .env, uploads and node_modules are not touched)
-cd backend
-npm install          # installs multer and nodemailer
-npm run db:init      # adds the new tables/columns. Your data is kept
-npm run dev
+**Interface**
+- Light and dark mode with a smooth switch
+- Collapsible sidebar (slide-over drawer on phones)
+- Gentle page transitions and animated progress bars
+- Fully responsive, with reduced-motion support
+
+### 🛡️ Admin Features
+- User list with search, expense counts and last-login dates
+- Activate, deactivate or delete user accounts
+- Clean up accounts that have been inactive for a chosen number of days
+- Manage the default categories shared by all students
+- Deactivated users are locked out immediately, even if their login token has not expired
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 18**: component-based UI
+- **Vite**: fast dev server and build tool
+- **React Router**: client-side routing
+- **Axios**: HTTP client
+- **Recharts**: charts and data visualisation
+- **Plain CSS** with theme variables for light and dark mode
+
+### Backend
+- **Node.js**: JavaScript runtime
+- **Express.js 5**: web framework
+- **MySQL 8**: relational database (via `mysql2`)
+- **JWT** (`jsonwebtoken`): secure authentication
+- **bcryptjs**: password hashing
+- **express-validator**: request validation
+- **Multer**: profile photo uploads
+- **Nodemailer**: password-reset emails
+- **Helmet, CORS, express-rate-limit, Morgan**: security and logging
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18 or higher)
+- MySQL 8.0.16 or higher (needed for CHECK constraints)
+- npm
+
+### Installation
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/<your-username>/spendwise.git
+cd spendwise
 ```
-The frontend needs no new packages: `npm run dev` again.
 
-### Making yourself an admin
-
-Register normally, then run in `backend`:
-```powershell
-npm run make-admin -- you@example.com
-```
-Log out and back in; an **Admin** link appears in the sidebar. (For a quick demo, `npm run seed` also creates `admin@spendwise.com` / `admin12345`. Never use that on a real deployment.)
-
-### Forgot-password emails
-
-- **Development (default):** leave the `SMTP_*` lines in `backend/.env` empty. When someone clicks "Forgot password", the reset link is **printed in the backend terminal**. Copy it into the browser.
-- **Real emails:** fill in `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`. For Gmail: `smtp.gmail.com`, port `587`, your address, and an **App Password** (Google Account → Security → 2-Step Verification → App passwords), not your normal password. Also set `CLIENT_URL` to where your site is hosted so the link points to the right place.
-
-## 1. What to install first
-
-| Tool | Version | Check with |
-|---|---|---|
-| Node.js (includes npm) | 18 or newer (22 tested) | `node -v` |
-| MySQL Community Server | 8.0.16 or newer (needed for CHECK constraints) | `mysql --version` |
-
-Optional: MySQL Workbench (GUI), VS Code, Thunder Client / Postman.
-During MySQL installation you set a password for the `root` user. Remember it.
-
-## 2. Setup (one time)
-
-### Step A: Backend
+**2. Install backend dependencies**
 
 ```bash
 cd backend
 npm install
 ```
 
-Create your environment file:
-
-```bash
-# Windows (PowerShell / CMD):  copy .env.example .env
-# macOS / Linux:               cp .env.example .env
-```
-
-Open `backend/.env` and set:
-- `DB_PASSWORD`: your MySQL root password
-- `JWT_SECRET`: any long random string. Generate one with:
-  `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
-
-Create the database, tables and default categories (one command, safe to re-run):
-
-```bash
-npm run db:init
-```
-
-### Step B: Frontend
+**3. Install frontend dependencies**
 
 ```bash
 cd ../frontend
 npm install
 ```
 
-No `.env` is needed in development.
+**4. Environment configuration**
 
-## 3. Run the app (two terminals)
+Create a `.env` file in the `backend` directory (copy `.env.example`):
+
+```env
+# Server
+PORT=5000
+CLIENT_URL=http://localhost:5173
+
+# Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=spendwise
+
+# JWT
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRES_IN=1d
+
+# Email for password reset (optional)
+# Leave SMTP_HOST empty in development: the reset link is printed in the backend terminal instead.
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
+MAIL_FROM="Spend-Wise <no-reply@example.com>"
+```
+
+Generate a strong secret with:
+`node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
+
+The frontend needs no `.env` in development. For production, set `VITE_API_URL=https://your-api-domain/api` before building.
+
+**5. Set up the database**
 
 ```bash
-# Terminal 1: API on http://localhost:5000
+cd backend
+npm run db:init
+```
+
+This creates the database, all tables and the default categories. It is safe to run again, and it upgrades older databases without losing data.
+
+**6. Start the application**
+
+Backend:
+```bash
 cd backend
 npm run dev
+```
 
-# Terminal 2: website on http://localhost:5173
+Frontend:
+```bash
 cd frontend
 npm run dev
 ```
 
-Open **http://localhost:5173**, register an account, and start adding expenses.
+Open **http://localhost:5173** and create an account.
 
-Optional demo data (sample expenses, budgets in warning/exceeded state, good for screenshots):
+### Optional: demo data and admin access
 
 ```bash
 cd backend
-npm run seed        # student: demo@spendwise.com / demo12345   admin: admin@spendwise.com / admin12345
+npm run seed                              # sample data for demos
+npm run make-admin -- you@example.com     # promote your own account to admin
 ```
 
-Optional automatic API test (server must be running): `npm run smoke` (60+ checks).
+The seed script creates `demo@spendwise.com` / `demo12345` (student) and `admin@spendwise.com` / `admin12345` (admin). Use it for local development only.
 
-## 4. Project structure
+### Available Scripts
+
+| Command | Where | What it does |
+|---|---|---|
+| `npm run dev` | backend / frontend | Start with auto-reload |
+| `npm start` | backend | Start in production mode |
+| `npm run db:init` | backend | Create or upgrade the database |
+| `npm run seed` | backend | Load demo data |
+| `npm run make-admin -- <email>` | backend | Make a user an admin |
+| `npm run smoke` | backend | Run the end-to-end API checks (server must be running) |
+| `npm run build` | frontend | Production build |
+
+## 📁 Project Structure
 
 ```
 spendwise/
-├── database/schema.sql            Tables, constraints, default categories
+│
+├── database/
+│   └── schema.sql                # Tables, constraints, default categories
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/           # Layout, Avatar, BudgetMeter, ExpenseModal, Modal, Toast...
+│   │   ├── pages/                # Page components
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Expenses.jsx
+│   │   │   ├── Income.jsx
+│   │   │   ├── Budgets.jsx
+│   │   │   ├── Recurring.jsx
+│   │   │   ├── Goals.jsx
+│   │   │   ├── Categories.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── Admin.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── ForgotPassword.jsx
+│   │   │   └── ResetPassword.jsx
+│   │   ├── context/              # Auth context
+│   │   ├── api.js                # Axios instance (adds JWT, handles 401)
+│   │   ├── hooks.js              # Animation hooks
+│   │   ├── utils.js              # Formatting helpers
+│   │   ├── styles.css
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+│
 ├── backend/
-│   ├── .env.example               Copy to .env
-│   └── src/
-│       ├── server.js, app.js      Startup, middleware, route mounting
-│       ├── config/db.js           MySQL connection pool
-│       ├── middleware/            auth.js (JWT check), validate.js
-│       ├── routes/                auth, categories, expenses, budgets, analytics
-│       ├── controllers/           Request handlers (SQL lives here)
-│       ├── services/budgetService.js   Budget usage % and alert logic
-│       └── scripts/               initDb.js, seedDemo.js, smokeTest.js
-└── frontend/
-    ├── vite.config.js             Dev server + /api proxy to backend
-    └── src/
-        ├── api.js                 Axios instance (adds JWT, handles 401)
-        ├── context/AuthContext.jsx  Login state
-        ├── components/            Layout, ExpenseModal, BudgetMeter, Toast
-        ├── pages/                 Login, Register, Dashboard, Expenses, Budgets, Categories, Profile
-        └── styles.css
+│   ├── src/
+│   │   ├── config/               # Database connection pool
+│   │   ├── controllers/          # Route controllers
+│   │   │   ├── authController.js
+│   │   │   ├── categoryController.js
+│   │   │   ├── expenseController.js
+│   │   │   ├── incomeController.js
+│   │   │   ├── budgetController.js
+│   │   │   ├── recurringController.js
+│   │   │   ├── goalController.js
+│   │   │   ├── analyticsController.js
+│   │   │   └── adminController.js
+│   │   ├── routes/               # API routes
+│   │   ├── middleware/           # Auth, admin, validation, recurring expenses
+│   │   ├── services/             # Budget logic, recurring logic, mailer
+│   │   ├── scripts/              # db init, seed, admin, smoke tests
+│   │   ├── app.js
+│   │   └── server.js
+│   ├── uploads/                  # Profile photos (git-ignored)
+│   ├── .env.example
+│   └── package.json
+│
+├── .gitignore
+└── README.md
 ```
 
-## 5. How the SRS maps to the code
+## 🗄️ Database
 
-| SRS requirement | Where |
+| Table | Purpose |
 |---|---|
-| Register / login, bcrypt, JWT, session restore | `authController.js`, `AuthContext.jsx` |
-| Expense CRUD, validation (amount > 0), date filters, search | `expenseController.js`, `ExpenseModal.jsx`, `Expenses.jsx` |
-| Default + custom categories | `categoryController.js`, `Categories.jsx` |
-| Monthly budget + per-category caps | `budgetController.js`, `Budgets.jsx` |
-| Normal < 80%, Warning 80-99%, Exceeded 100%+ | `budgetService.js` (`statusFor`) |
-| Alerts when an expense is saved | `getAlerts()` returned by POST/PUT `/expenses`, shown as toasts |
-| Pie chart + 6-month trend + remaining balance | `analyticsController.js`, `Dashboard.jsx` |
-| SQL injection protection | Every query uses `?` placeholders |
-| Foreign-key cascades | `schema.sql` (ON DELETE CASCADE / RESTRICT) |
+| `users` | Accounts, roles, status, last login, profile photo |
+| `categories` | Default (shared) and custom (per-user) categories |
+| `expenses` | Every logged expense |
+| `budgets` | Monthly overall and per-category limits |
+| `income` | Money coming in |
+| `goals` | Savings goals and progress |
+| `recurring_expenses` | Rules for monthly repeating expenses |
+| `password_resets` | Hashed, expiring password-reset tokens |
 
-## 6. API reference (all except auth need `Authorization: Bearer <token>`)
+Relationships use foreign keys with cascading deletes, so removing a user removes all of their data, and a category that is still in use cannot be deleted.
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| POST | `/api/auth/register` | Create account, returns token |
-| POST | `/api/auth/login` | Log in, returns token |
-| GET / PUT | `/api/auth/me` | Get / update profile and password |
-| GET | `/api/categories` | Defaults + your custom categories |
-| POST / PUT / DELETE | `/api/categories[/:id]` | Manage custom categories |
-| GET | `/api/expenses?from=&to=&category_id=&search=&page=&limit=` | List with filters |
-| POST / PUT / DELETE | `/api/expenses[/:id]` | Manage expenses (POST/PUT also return `alerts`) |
-| GET | `/api/budgets?month=YYYY-MM` | Overall + category caps with usage % and status |
-| PUT | `/api/budgets` | `{month_year, category_id (null = overall), budget_cap}`: create or update |
-| DELETE | `/api/budgets/:id` | Remove a budget |
-| GET | `/api/analytics/summary?month=YYYY-MM` | Everything the dashboard needs |
-| GET / POST / PUT / DELETE | `/api/income[/:id]` | Income entries (list takes `from`, `to`, `search`, `page`) |
-| GET / POST / PUT / DELETE | `/api/goals[/:id]` | Savings goals; `POST /api/goals/:id/contribute {amount}` adds (or with a negative amount, removes) money |
-| GET / POST / PUT / DELETE | `/api/recurring[/:id]` | Recurring expenses |
-| POST | `/api/auth/forgot`, `/api/auth/reset` | Request a reset link / set a new password with the token |
-| * | `/api/admin/...` | Admin only: `stats`, `users`, `users/:id` (PATCH status, DELETE), `cleanup`, `categories` |
-| POST | `/api/budgets/copy` | `{from_month, to_month}`: copy budgets into another month (keeps existing ones) |
-| GET | `/api/expenses/export` | Download expenses as CSV (same filters as the list) |
-| POST / DELETE | `/api/auth/avatar` | Upload (`multipart`, field `avatar`) / remove profile photo |
-| GET | `/api/health` | Server + database check |
+## 🔌 API Endpoints
 
-## 7. Troubleshooting
+All endpoints except authentication and health need an `Authorization: Bearer <token>` header.
+
+### Authentication
+```
+POST   /api/auth/register         # Register new user
+POST   /api/auth/login            # Login
+GET    /api/auth/me               # Current user
+PUT    /api/auth/me               # Update name / password
+POST   /api/auth/avatar           # Upload profile photo
+DELETE /api/auth/avatar           # Remove profile photo
+POST   /api/auth/forgot           # Request a password-reset link
+POST   /api/auth/reset            # Set a new password with the token
+```
+
+### Expenses
+```
+GET    /api/expenses              # List (filters: from, to, category_id, search, page, limit)
+GET    /api/expenses/export       # Download as CSV
+POST   /api/expenses              # Add expense (returns budget alerts)
+PUT    /api/expenses/:id          # Update expense
+DELETE /api/expenses/:id          # Delete expense
+```
+
+### Categories
+```
+GET    /api/categories            # Defaults + your custom categories
+POST   /api/categories            # Create custom category
+PUT    /api/categories/:id        # Rename
+DELETE /api/categories/:id        # Delete
+```
+
+### Budgets
+```
+GET    /api/budgets?month=YYYY-MM # Overall and category budgets with usage and status
+PUT    /api/budgets               # Create or update a budget
+POST   /api/budgets/copy          # Copy budgets from another month
+DELETE /api/budgets/:id           # Remove a budget
+```
+
+### Income
+```
+GET    /api/income                # List income
+POST   /api/income                # Add income
+PUT    /api/income/:id            # Update income
+DELETE /api/income/:id            # Delete income
+```
+
+### Recurring Expenses
+```
+GET    /api/recurring             # List rules with next due date
+POST   /api/recurring             # Create rule
+PUT    /api/recurring/:id         # Update, pause or resume
+DELETE /api/recurring/:id         # Delete rule
+```
+
+### Savings Goals
+```
+GET    /api/goals                       # List goals with progress
+POST   /api/goals                       # Create goal
+PUT    /api/goals/:id                   # Update goal
+POST   /api/goals/:id/contribute        # Add (or take out) money
+DELETE /api/goals/:id                   # Delete goal
+```
+
+### Analytics
+```
+GET    /api/analytics/summary?month=YYYY-MM   # Everything the dashboard needs
+```
+
+### Admin (admin accounts only)
+```
+GET    /api/admin/stats                 # Totals
+GET    /api/admin/users                 # List and search users
+PATCH  /api/admin/users/:id             # Activate / deactivate
+DELETE /api/admin/users/:id             # Delete user and their data
+POST   /api/admin/cleanup               # Delete accounts inactive for N days
+GET    /api/admin/categories            # Default categories
+POST   /api/admin/categories            # Add default category
+PUT    /api/admin/categories/:id        # Rename default category
+DELETE /api/admin/categories/:id        # Delete default category
+```
+
+### Health
+```
+GET    /api/health                      # Server and database check
+```
+
+## 🔒 Security Features
+
+- **JWT Authentication**: secure token-based sessions
+- **Password Hashing**: bcrypt with salting
+- **Live Account Checks**: every request re-verifies the account, so deactivated or deleted users are locked out immediately
+- **Protected Routes**: auth middleware on all private endpoints, plus an admin-only guard
+- **SQL Injection Protection**: every query uses parameterised statements
+- **Input Validation**: server-side validation on all request bodies and query parameters
+- **Rate Limiting**: login, registration and password-reset endpoints are throttled
+- **Safe Password Reset**: tokens are random, stored only as hashes, single-use and expire in 30 minutes; the API never reveals whether an email is registered
+- **Safe Uploads**: profile photos are checked by their real file signature, limited to 2 MB and stored under random names
+- **CSV Injection Guard**: exported cells that start with formula characters are neutralised
+- **Secure Headers & CORS**: Helmet, and CORS limited to the frontend origin
+- **Environment Variables**: secrets are kept out of source code
+
+## 🧪 Testing
+
+With the backend running, `npm run smoke` runs more than 60 automated end-to-end checks covering authentication, validation, budgets and alerts, income, goals, recurring expenses, password reset, uploads, CSV export and the admin area.
+
+## 🩹 Troubleshooting
 
 | Problem | Fix |
 |---|---|
 | `Access denied for user 'root'` | Wrong `DB_PASSWORD` in `backend/.env` |
-| `ECONNREFUSED 127.0.0.1:3306` | MySQL isn't running. Start the MySQL service |
-| `Client does not support authentication protocol` | Run in MySQL: `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'yourpassword';` |
-| `Unknown database 'spendwise'` | Run `npm run db:init` in `backend` |
-| `JWT_SECRET is missing` | You haven't created `backend/.env` |
-| Port 5000 already in use (common on macOS) | Change `PORT` in `backend/.env` **and** the proxy target in `frontend/vite.config.js` |
-| Frontend shows "Cannot reach the server" | Backend isn't running, or crashed. Check Terminal 1 |
-| CHECK constraint ignored | MySQL older than 8.0.16. Upgrade MySQL |
+| `ECONNREFUSED 127.0.0.1:3306` | MySQL is not running. Start the MySQL service |
+| `Unknown database 'spendwise'` or `Unknown column` | Run `npm run db:init` in `backend` |
+| `JWT_SECRET is missing` | Create `backend/.env` from `.env.example` |
+| Frontend says "Cannot reach the server" | The backend is not running |
+| Reset email never arrives | In development the link is printed in the backend terminal. Set `SMTP_*` to send real email |
 
-## 8. Deploying (outline)
+## 📝 License
 
-1. Build the frontend: `cd frontend && npm run build` produces `dist/`. Host it on Netlify / Vercel / any static host.
-2. Set `VITE_API_URL=https://your-api-domain/api` **before** building.
-3. Host the backend (Render, Railway, a VPS) with a managed MySQL. Set the same variables as `.env`, and set
-   `CLIENT_URL` to your frontend's URL. Use a strong `JWT_SECRET` and serve everything over HTTPS.
+This project is licensed under the MIT License.
 
-## 9. Notes and design decisions
+## 🙏 Acknowledgments
 
-- `category_name` is unique **per user** (the SRS says globally unique, which would stop two students from both creating "Gym").
-- One overall cap per month is enforced in code, because MySQL unique keys allow duplicate NULLs.
-- Income, goals, recurring expenses and password reset go beyond the original SRS/ER diagram, so add them to your documentation if you submit this for a course.
-- Every request re-checks the account in the database, so deactivating or deleting a user locks them out immediately, even if their login token hasn't expired.
-- Recurring expenses are created when you open the app (not by a background timer), using the server's clock. Each month is claimed atomically, so it can never be added twice.
-- Profile photos are saved in `backend/uploads/avatars/` (git-ignored). The server checks the real file signature, not just the file name, and renames every upload. On hosts with temporary disks (Render/Heroku free tiers) use cloud storage instead.
-- The JWT is kept in `localStorage` for simplicity. For higher security, move it to an httpOnly cookie.
-- Currency defaults to INR. Change `CURRENCY` / `LOCALE` at the top of `frontend/src/utils.js`.
+- [React](https://react.dev) and [Vite](https://vitejs.dev) for the frontend foundation
+- [Recharts](https://recharts.org) for the charts
+- [Express](https://expressjs.com) and [MySQL](https://www.mysql.com) for the backend and data layer
+- The open-source community for the amazing tools that made this possible
