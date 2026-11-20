@@ -1,17 +1,20 @@
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 
-// A pool keeps connections open and reuses them (faster than one per request).
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+  port: Number(process.env.DB_PORT) || 4000,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  ssl: {
+    minVersion: "TLSv1.2",
+    rejectUnauthorized: true,
+  },
   waitForConnections: true,
   connectionLimit: 10,
-  dateStrings: true,       // DATE/DATETIME come back as plain strings
-  decimalNumbers: true,    // DECIMAL columns come back as JS numbers
+  dateStrings: true,
+  decimalNumbers: true,
 });
 
 module.exports = pool;
